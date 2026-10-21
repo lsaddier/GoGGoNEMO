@@ -10,9 +10,18 @@
     <zoom_domain ibegin="1" jbegin="1" ni="2" nj="3"/>
   </domain>
 
-  <domain id="1point" domain_ref="grid_T" >
-    <zoom_domain ibegin="139" jbegin="119" ni="1" nj="1"/>
+  <domain id="east" domain_ref="grid_T" >
+    <zoom_domain ibegin="56" jbegin="5" ni="1" nj="1"/>
   </domain>
+
+  <domain id="center" domain_ref="grid_T" >
+    <zoom_domain ibegin="56" jbegin="13" ni="1" nj="1"/>
+  </domain>
+  
+  <domain id="west" domain_ref="grid_T" >
+    <zoom_domain ibegin="56" jbegin="20" ni="1" nj="1"/>
+  </domain>
+
 
 
   <!--   Eq section -->

@@ -8,6 +8,17 @@
 <grid_definition>
 
   <!--  -->
+  <grid id="grid_1pt_center" >
+    <domain domain_ref="center" />
+    <axis axis_ref="deptht" />
+  </grid>
+  <!--  -->
+  <grid id="grid_1pt_west" >
+    <domain domain_ref="west" />
+    <axis axis_ref="deptht" />
+  </grid>
+  
+  <!--  -->
   <grid id="grid_T_2D" >
     <domain domain_ref="grid_T" />
   </grid>

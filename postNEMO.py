@@ -21,6 +21,7 @@ import sys
 import numpy as np
 import contextlib as ctx
 from netCDF4 import Dataset
+import xarray as xr
 
 import rPARAMS as rP
 
@@ -39,6 +40,7 @@ rP_CASE=rP.rP_CASE
 rP_DESC=rP.rP_DESC
 rP_YEAR0=int(rP.rP_YEAR0)
 rP_YEAR_MAX=int(rP.rP_YEAR_MAX)
+rP_PARTITION=rP.rP_PARTITION
 #rP_ARRAYJOB=rP.rP_ARRAYJOB
 #rP_HISFTBL=rP.rP_HISFTBL
 
@@ -95,7 +97,7 @@ if __name__ == "__main__":
     LogStart('',fout=False)
 
     #ofol='/work/n02/n02/chbull/nemo/nemo_output/'
-    ofol='/scratch/E5N/lsaddier/nemo/nemo_output/'
+    ofol='/scratch/'+rP_PARTITION+'/lsaddier/nemo/nemo_output/'
 
     lg.info("******************************************")
     lg.info("*   project "+rP_PROJ  +"                    ")
@@ -109,7 +111,7 @@ if __name__ == "__main__":
 
     YEAR=rP_YEAR0
 
-    NDAYS=365
+    #NDAYS=365
     NDAYS=360
     nml = f90nml.read(nmlpath)
     #LouisS, this is because you are using Nemo4.2.1 where they changed the time step variable name, who knows why?! CB
@@ -228,7 +230,7 @@ if __name__ == "__main__":
     if not os.path.exists(rdir):
         mkdir(rdir)
 
-    ofiles=sorted(glob.glob(rP_WORKDIR+rP_CONFIG+'_'+rP_CASE+'_[1-5][dhmy]_*nc'))
+    ofiles=sorted(glob.glob(rP_WORKDIR+rP_CONFIG+'_'+rP_CASE+'_*[dhmy]_*nc'))
     rfiles=sorted(glob.glob(rP_WORKDIR+rP_CONFIG+'_'+rP_CASE+'_*_restart*.nc'))
 
     #something bad maybe happened let's see if there's a NEMO error..
@@ -240,7 +242,7 @@ if __name__ == "__main__":
         p_status = p.wait()
         lg.info(output)
 
-    assert(ofiles!=[]),"E R R O R: Didn't find any NEMO output files, STOP! "+'Glob was: '+rP_WORKDIR+rP_CONFIG+'_'+rP_CASE+'_[1-5][dhmy]_*nc'
+    assert(ofiles!=[]),"E R R O R: Didn't find any NEMO output files, STOP! "+'Glob was: '+rP_WORKDIR+rP_CONFIG+'_'+rP_CASE+'_*[dhmy]_*nc'
     assert(rfiles!=[]),"E R R O R: Didn't find any NEMO restart files,STOP! "+'Glob was: '+rP_WORKDIR+rP_CONFIG+'_'+rP_CASE+'_*_restart*.nc'
 
     #move the output/restart and initfiles (if they existed)
@@ -387,10 +389,11 @@ if __name__ == "__main__":
             handle.write('cp -v '+ rP_WORKDIR + 'bathy_meter.nc '+ofol+rP_CONFIG+'_'+rP_CASE+'/'+'\n')
             handle.write('cp -v '+ rP_WORKDIR + 'TS_init.nc '+ofol+rP_CONFIG+'_'+rP_CASE+'/'+'\n')
             handle.write('cp -v '+ rP_WORKDIR + 'rPARAMS.py '+ofol+rP_CONFIG+'_'+rP_CASE+'/'+'\n')
-            handle.write('cp -v '+ rP_WORKDIR + 'setupNEMO_ARC2.py '+ofol+rP_CONFIG+'_'+rP_CASE+'/'+'\n')
+            handle.write('cp -v '+ rP_WORKDIR + 'setupNEMO_BRIINE.py '+ofol+rP_CONFIG+'_'+rP_CASE+'/'+'\n') #LS modification (BRIINE instead of ARCHER)
             handle.write('cp -v '+ rP_WORKDIR + 'domaincfg/namelist_ref '+ofol+rP_CONFIG+'_'+rP_CASE+'/domaincfg_namelist_ref'+'\n')
             handle.write('cp -v '+ rP_WORKDIR + 'domaincfg/namelist_cfg '+ofol+rP_CONFIG+'_'+rP_CASE+'/domaincfg_namelist_cfg'+'\n')
             handle.write('cp -v '+ rP_WORKDIR + 'domain_cfg.nc '+ofol+rP_CONFIG+'_'+rP_CASE+'/'+'\n')
+            handle.write('cp -v '+ rP_WORKDIR + 'namelist_ref '+ofol+rP_CONFIG+'_'+rP_CASE+'/'+'\n') #LS add
             
             #handle.write('cp -v '+ rP_WORKDIR + 'production_nemo_ARCHER.py '+ofol+rP_CONFIG+'_'+rP_CASE+'/'+'\n')
 
@@ -429,6 +432,9 @@ if __name__ == "__main__":
     subprocess.call('chmod u+x '+rP_WORKDIR+'mv_restarts_rdf.sh',shell=True) 
     frestart.close()
 
+
+
+
     #kick on for another year.
     #YEAR=str(int(YEAR)+1)
 
@@ -438,3 +444,23 @@ if __name__ == "__main__":
     localtime = time.asctime( time.localtime(time.time()) )
     lg.info("Local current time : "+ str(localtime))
     lg.info('SCRIPT ended')
+
+
+
+
+    #### LS modification to cancel simulation when a transition has occured ###
+    #threshold_tip = 15 #m/y 
+
+    #last_file = glob.glob(ofol+rP_CONFIG+'_'+rP_CASE+'/'+str(YEAR).zfill(4)+'/*1m*T.nc')[0]
+    #ds = xr.open_dataset(last_file)
+    
+    # compute avg melt and convert it into m/y
+    #avg = ds.sowflisf.isel(time_counter=-1, x=slice(1,51), y=slice(1,26)).mean(dim=["x","y"]).item()
+    #avg = avg*24*3600*360/910
+
+    #jobid = os.environ["SLURM_JOB_ID"]
+    #if avg > threshold_tip:
+    #    lg.info(f"Tipping detected (avg={avg:.2f} m/y). Cancelling job {jobid}")
+    #    subprocess.call(["scancel", jobid])
+
+

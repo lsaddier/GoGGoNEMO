@@ -1280,14 +1280,33 @@ that are available in the tidal-forcing implementation (see
     <field field_ref="sst"          name="tos"      long_name="sea_surface_temperature"         />
     <field field_ref="sss"          name="sos"      long_name="sea_surface_salinity"            />
     <field field_ref="ssh"          name="zos"      long_name="sea_surface_height_above_geoid"  />
+    <field id="rho_tbl" name="potential density in the Losh boundary" unit="kg/m^3"  grid_ref="grid_T_2D" > - alpha * ttbl_cav + beta * stbl </field>
+    <field id="virt_fs"  name="virtual melting salt flux"      unit="g/m^2/s" grid_ref="grid_T_2D" > stbl * fwfisf_cav </field>
 
     <!-- grid U -->
     <field field_ref="e3u"          name="e3u"     long_name="vertical scale factor"            />
     <field field_ref="ssu"          name="uos"     long_name="sea_surface_x_velocity"           />
+    <field id="soce_on_U"         name="salinity interpolation on the U grid"    unit="psu"  field_ref="soce" grid_ref="grid_U_3D"   />
+    <field id="toce_on_U"         name="temperature interpolation on the U grid" unit="degC" field_ref="toce" grid_ref="grid_U_3D"   />
+    <field id="salt_flx_e3u" name="vertical salt flux time e3u" unit="psu*m2/s"  grid_ref="grid_U_3D" > soce_on_U * uoce_e3u </field>
+    <field id="heat_flx_e3u" name="vertical heat flux time e3u" unit="degC*m2/s" grid_ref="grid_U_3D" > toce_on_U * uoce_e3u </field>
 
     <!-- grid V -->
     <field field_ref="e3v"          name="e3v"     long_name="vertical scale factor"            />
     <field field_ref="ssv"          name="vos"     long_name="sea_surface_y_velocity"           />
+
+    <!-- grid W -->
+    <field id="soce_on_W"         name="salinity interpolation on the W grid"    unit="psu"  field_ref="soce" grid_ref="grid_W_3D"   />
+    <field id="toce_on_W"         name="temperature interpolation on the W grid" unit="degC" field_ref="toce" grid_ref="grid_W_3D"   />
+    <field id="vert_salt_flx_e3w" name="vertical salt flux time e3w" unit="psu*m2/s"  grid_ref="grid_W_3D" > soce_on_W * woce_e3w </field>
+    <field id="vert_heat_flx_e3w" name="vertical heat flux time e3w" unit="degC*m2/s" grid_ref="grid_W_3D" > toce_on_W * woce_e3w </field>
+    <field id="woce2"             name="Square of woce"              unit="m2/s2"     grid_ref="grid_W_3D" > woce * woce </field>
+    <field id="woce2_e3w"         name="Square of woce time e3w"     unit="m3/s2"     grid_ref="grid_W_3D" > woce2 * e3w </field>
+    <field id="avt_evd_bn2_e3w"   name="avt_evd_e3w time bn2"        unit="m3/s3"     grid_ref="grid_W_3D" > avt_evd_e3w * bn2  </field>
+  
+    <!-- grid 1pt -->
+    <field id="toce_on_1pt_east"  name="temperature interpolation on the 1pt east grid" unit="degC" field_ref="toce" grid_ref="grid_1pt_east"   />
+  
   </field_group>
 
   <!--============================-->

@@ -38,6 +38,7 @@ rP_CASE=rP.rP_CASE
 rP_DESC=rP.rP_DESC
 rP_YEAR0=int(rP.rP_YEAR0)
 rP_YEAR_MAX=int(rP.rP_YEAR_MAX)
+rP_PARTITION=rP.rP_PARTITION
 #rP_ARRAYJOB=rP.rP_ARRAYJOB
 #rP_HISFTBL=rP.rP_HISFTBL
 
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     LogStart('',fout=False)
 
     #ofol='/fs2/n02/n02/chbull/nemo/nemo_output/'
-    ofol='/scratch/E5N/lsaddier/nemo/nemo_output/'
+    ofol='/scratch/'+rP_PARTITION+'/lsaddier/nemo/nemo_output/'
 
     lg.info("******************************************")
     lg.info("*   project "+rP_PROJ  +"                    ")
@@ -98,9 +99,9 @@ if __name__ == "__main__":
     while int(YEAR) <= int(rP_YEAR_MAX):
         # lg.info("Currently working on year: " + str(YEAR))
 
-        NDAYS=5
+        #NDAYS=5
         # NDAYS=32
-        NDAYS=365
+        #NDAYS=365
         NDAYS=360
         lg.info("We are running with NDAYS: "+ str(NDAYS))
 
@@ -114,6 +115,9 @@ if __name__ == "__main__":
         #LouisS, this is because you are using Nemo4.2.1 where they changed the time step variable name, who knows why?! CB
         #RN_DT=nml['namdom']['rn_rdt']
         RN_DT=nml['namdom']['rn_Dt']
+
+        #LouisS modification, number of steps during 1 year
+        NN_STOCK=int(86400*NDAYS/RN_DT)
 
         nml_patch={}
         if not os.path.exists(rP_WORKDIR+'prod_nemo.db'):
@@ -135,7 +139,8 @@ if __name__ == "__main__":
 
             # warning: can't do integer with leading zeros...
             # nml_patch['namrun']={'ln_rstart':False,'cn_exp':rP_CONFIG+'_'+rP_CASE,'nn_date0':00010101,'nn_rstctl':0,'nn_it000':int(NIT000),'nn_itend':int(NITEND),'nn_leapy':30}
-            nml_patch['namrun']={'ln_rstart':False,'cn_exp':rP_CONFIG+'_'+rP_CASE,'nn_rstctl':0,'nn_it000':int(NIT000),'nn_itend':int(float(NITEND)),'nn_leapy':30}
+            nml_patch['namrun']={'ln_rstart':True,'cn_exp':rP_CONFIG+'_'+rP_CASE,'nn_rstctl':0,'nn_it000':int(NIT000),'nn_itend':int(float(NITEND)),'nn_leapy':30,'nn_stock':int(NN_STOCK), 'cn_ocerst_indir':rP_WORKDIR,'cn_ocerst_in':'restart'}
+
             nml_patch['namdom']={'ln_meshmask':True}
 
             # thickness of the top boundary layer           (Losh et al. 2008)
@@ -171,7 +176,7 @@ if __name__ == "__main__":
             NITEND=float(str(int(NITENDM1) + int(NDAYS) * 86400 / int(RN_DT)))
             dummy,rP_YEAR0,dummy2=(lineList[0].split(' '))[0:3]
             dummy,dummy2=None,None
-            nml_patch['namrun']={'ln_rstart':True,'cn_exp':rP_CONFIG+'_'+rP_CASE,'nn_rstctl':2,'nn_it000':int(NIT000),'nn_itend':int(NITEND),'cn_ocerst_indir':rP_WORKDIR+'OUTNEMO_'+str(int(NRUN)-1).zfill(4)+'/restarts/','nn_leapy':30,'cn_ocerst_in':rP_CONFIG+'_'+rP_CASE+'_'+str(NITENDM1)+'_restart'}
+            nml_patch['namrun']={'ln_rstart':True,'cn_exp':rP_CONFIG+'_'+rP_CASE,'nn_rstctl':2,'nn_it000':int(NIT000),'nn_itend':int(NITEND),'cn_ocerst_indir':rP_WORKDIR+'OUTNEMO_'+str(int(NRUN)-1).zfill(4)+'/restarts/','nn_leapy':30,'cn_ocerst_in':rP_CONFIG+'_'+rP_CASE+'_'+str(NITENDM1)+'_restart','nn_stock':int(NN_STOCK)}
 
             # thickness of the top boundary layer           (Losh et al. 2008)
             #nml_patch['namsbc_isf']={'rn_hisf_tbl':rP_HISFTBL}
