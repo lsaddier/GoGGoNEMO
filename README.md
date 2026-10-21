@@ -1,5 +1,5 @@
 # GoGGoNEMO
-Collection of scripts to set-up and loop NEMO on PMSN at ENS de Lyon, France. Named in honour of the Go-Go-Mobil (https://www.youtube.com/watch?v=BvOz_qUPbXo). Suggestions/pull requests for improvements welcome!
+Collection of scripts to set-up and loop NEMO on PSMN at ENS de Lyon, France. Named in honour of the Go-Go-Mobil (https://www.youtube.com/watch?v=BvOz_qUPbXo). Suggestions/pull requests for improvements welcome!
 
 Note, we had to use a workaround because pmsn did not have ksh.
 
