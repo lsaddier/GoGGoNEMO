@@ -11,7 +11,7 @@ f90nml
 See setupNEMO_BRIINE.py. 
 
 ## For the user to add
-Note in this case, there are additional xml files and a namelist_ref, these were for the isomip_plus case (merged with namelist_ref from the SHARED folder) that Louis was working off using nemo4.2.1. see the file notice_NEMO_installation_PSMN.md
+Note in this case, there are additional xml files and a namelist_ref, these were for the isomip_plus case (merged with namelist_ref from the SHARED folder) that Louis was working off using nemo4.2.1. see the file `notice_NEMO_installation_PSMN.md`
 
 # Contact
 Christopher Bull. 
